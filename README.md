@@ -20,6 +20,39 @@ Composer プロジェクトのテンプレートです．PHP8.1 以上を想定�
 - jobs.build.strategy.matrix.php
   - 対応する PHP のバージョンに依る
 
+## Coveralls （カバレッジ管理サービス）を使わない方
+ci.yml を以下のものに書き換えてください
+```yaml
+name: CI
+
+on: []
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php: [8.1, 8.2]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: xdebug
+      - name: Composer install
+        run: composer install
+      - name: Lint
+        run: composer lint
+      - name: Static Analysis
+        run: composer stan
+      - name: Test
+        run: vendor/bin/phpunit tests/ 
+```
+
 # composer.json で設定が必要な項目
 - name
 - description
@@ -27,3 +60,4 @@ Composer プロジェクトのテンプレートです．PHP8.1 以上を想定�
 - keywords
 - autoload のパス
 - autoload-dev のパス
+
